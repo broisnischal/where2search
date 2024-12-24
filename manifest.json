@@ -1,0 +1,21 @@
+{
+    "$schema": "https://json.schemastore.org/chrome-manifest",
+    "manifest_version": 3,
+    "name": "Where2Search",
+    "version": "1.0.0",
+    "description": "",
+    "author": "Nischal Dahal",
+    "action": {
+        "default_title": "Where2Search"
+    },
+    "background": {
+        "service_worker": "src/background/index.js",
+        "type": "module"
+    },
+    "permissions": [
+        "contextMenus",
+        "activeTab",
+        "scripting"
+    ],
+    "host_permissions": []
+}
