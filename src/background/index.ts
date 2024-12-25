@@ -75,54 +75,139 @@ const developmentSearches: SearchEngines[] = [
     }
 ]
 
+// chrome.runtime.onInstalled.addListener(() => {
+//     chrome.contextMenus.create({
+//         id: "where2search",
+//         title: "Where2Search",
+//         contexts: ["selection"],
+//     });
+
+//     searchEngines.forEach((engine) => {
+//         chrome.contextMenus.create({
+//             id: engine.id,
+//             title: engine.title,
+//             contexts: ["selection"],
+//             parentId: "where2search",
+//         })
+//     })
+
+//     chrome.contextMenus.create({
+//         id: "others",
+//         title: "Others",
+//         contexts: ["selection"],
+//         parentId: "where2search",
+//     })
+
+//     othersSearches.forEach((engine) => {
+//         chrome.contextMenus.create({
+//             id: engine.id,
+//             title: engine.title,
+//             contexts: ["selection"],
+//             parentId: "others",
+//         })
+//     })
+
+//     chrome.contextMenus.create({
+//         id: "development",
+//         title: "Development",
+//         contexts: ["selection"],
+//         parentId: "where2search",
+//     })
+
+//     developmentSearches.forEach((engine) => {
+//         chrome.contextMenus.create({
+//             id: engine.id,
+//             title: engine.title,
+//             contexts: ["selection"],
+//             parentId: "development",
+//         })
+//     })
+// })
+
+// chrome.contextMenus.onClicked.addListener((info) => {
+//     if (!info.selectionText) return;
+
+//     const engine = [...searchEngines, ...othersSearches, ...developmentSearches].find((e) => e.id === info.menuItemId);
+//     if (engine) {
+//         const queryUrl = engine.url + encodeURIComponent(info.selectionText);
+//         chrome.tabs.create({ url: queryUrl });
+//     }
+// });
+
 chrome.runtime.onInstalled.addListener(() => {
-    chrome.contextMenus.create({
-        id: "where2search",
-        title: "Where2Search",
-        contexts: ["selection"],
+    // Initialize the storage for last used engine if not set
+    chrome.storage.local.get("lastUsedSearchEngine", (data) => {
+        if (!data.lastUsedSearchEngine) {
+            chrome.storage.local.set({ lastUsedSearchEngine: "google" });
+        }
     });
 
-    searchEngines.forEach((engine) => {
+    createContextMenus();
+});
+
+function createContextMenus() {
+    chrome.contextMenus.removeAll(() => {
         chrome.contextMenus.create({
-            id: engine.id,
-            title: engine.title,
+            id: "where2search",
+            title: "Search In",
             contexts: ["selection"],
-            parentId: "where2search",
-        })
-    })
+        });
 
-    chrome.contextMenus.create({
-        id: "others",
-        title: "Others",
-        contexts: ["selection"],
-        parentId: "where2search",
-    })
+        chrome.storage.local.get("lastUsedSearchEngine", (data) => {
+            const lastUsedEngine = data.lastUsedSearchEngine;
+            const prioritizedSearchEngines = reorderSearchEngines(searchEngines, lastUsedEngine);
 
-    othersSearches.forEach((engine) => {
-        chrome.contextMenus.create({
-            id: engine.id,
-            title: engine.title,
-            contexts: ["selection"],
-            parentId: "others",
-        })
-    })
+            prioritizedSearchEngines.forEach((engine) => {
+                chrome.contextMenus.create({
+                    id: engine.id,
+                    title: engine.title,
+                    contexts: ["selection"],
+                    parentId: "where2search",
+                });
+            });
 
-    chrome.contextMenus.create({
-        id: "development",
-        title: "Development",
-        contexts: ["selection"],
-        parentId: "where2search",
-    })
+            chrome.contextMenus.create({
+                id: "others",
+                title: "Others",
+                contexts: ["selection"],
+                parentId: "where2search",
+            });
 
-    developmentSearches.forEach((engine) => {
-        chrome.contextMenus.create({
-            id: engine.id,
-            title: engine.title,
-            contexts: ["selection"],
-            parentId: "development",
-        })
-    })
-})
+            othersSearches.forEach((engine) => {
+                chrome.contextMenus.create({
+                    id: engine.id,
+                    title: engine.title,
+                    contexts: ["selection"],
+                    parentId: "others",
+                });
+            });
+
+            chrome.contextMenus.create({
+                id: "development",
+                title: "Development",
+                contexts: ["selection"],
+                parentId: "where2search",
+            });
+
+            developmentSearches.forEach((engine) => {
+                chrome.contextMenus.create({
+                    id: engine.id,
+                    title: engine.title,
+                    contexts: ["selection"],
+                    parentId: "development",
+                });
+            });
+        });
+    });
+}
+
+function reorderSearchEngines(engines: SearchEngines[], lastUsed: string): SearchEngines[] {
+    const lastUsedIndex = engines.findIndex((engine) => engine.id === lastUsed);
+    if (lastUsedIndex === -1) return engines; // No match, return original order
+
+    const lastUsedEngine = engines.splice(lastUsedIndex, 1)[0];
+    return [lastUsedEngine, ...engines];
+}
 
 chrome.contextMenus.onClicked.addListener((info) => {
     if (!info.selectionText) return;
@@ -132,5 +217,7 @@ chrome.contextMenus.onClicked.addListener((info) => {
     if (engine) {
         const queryUrl = engine.url + encodeURIComponent(info.selectionText);
         chrome.tabs.create({ url: queryUrl });
+
+        chrome.storage.local.set({ lastUsedSearchEngine: engine.id });
     }
 });
