@@ -11,6 +11,11 @@ const searchEngines: SearchEngines[] = [
     { id: "grep", title: "Grep", url: "https://grep.app/search?q=" },
     { id: "twitter", title: "Twitter", url: "https://twitter.com/search?q=" },
     {
+        id: "perplexity",
+        title: "Perplexity",
+        url: "https://perplexity.ai/search?q="
+    },
+    {
         id: "youtube",
         title: "YouTube",
         url: "https://www.youtube.com/results?search_query="
