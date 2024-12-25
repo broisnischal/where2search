@@ -8,7 +8,7 @@ const searchEngines: SearchEngines[] = [
     { id: "google", title: "Google", url: "https://www.google.com/search?q=" },
     { id: "reddit", title: "Reddit", url: "https://www.reddit.com/search/?q=" },
     { id: "github", title: "GitHub", url: "https://github.com/search?q=" },
-    { id: "grep", title: "Grep App", url: "https://grep.app/search?q=" },
+    { id: "grep", title: "Grep", url: "https://grep.app/search?q=" },
     { id: "twitter", title: "Twitter", url: "https://twitter.com/search?q=" },
     {
         id: "youtube",
@@ -150,7 +150,7 @@ function createContextMenus() {
         chrome.contextMenus.create({
             id: "where2search",
             title: "Search In",
-            contexts: ["selection"],
+            contexts: ["selection", "link"],
         });
 
         chrome.storage.local.get("lastUsedSearchEngine", (data) => {
@@ -203,7 +203,7 @@ function createContextMenus() {
 
 function reorderSearchEngines(engines: SearchEngines[], lastUsed: string): SearchEngines[] {
     const lastUsedIndex = engines.findIndex((engine) => engine.id === lastUsed);
-    if (lastUsedIndex === -1) return engines; // No match, return original order
+    if (lastUsedIndex === -1) return engines;
 
     const lastUsedEngine = engines.splice(lastUsedIndex, 1)[0];
     return [lastUsedEngine, ...engines];
