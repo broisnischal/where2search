@@ -28,11 +28,14 @@
     "watch": "tsc -w",
     "clean": "rimraf dist",
     "copy-assets": "rsync -av --exclude 'tsconfig.json' --exclude 'src' --exclude 'dist' ./ dist/",
-    "build": "npm run clean && npm run start && npm run copy-assets"
+    "build": "npm run clean && npm run start && npm run copy-assets && tsx ./src/archive.ts"
   },
   "devDependencies": {
+    "@types/archiver": "^6.0.3",
     "@types/chrome": "^0.0.287",
+    "@types/node": "^22.10.2",
     "rimraf": "^6.0.1",
+    "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   },
   "dependencies": {
