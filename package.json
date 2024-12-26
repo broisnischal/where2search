@@ -34,5 +34,8 @@
     "@types/chrome": "^0.0.287",
     "rimraf": "^6.0.1",
     "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "archiver": "^7.0.1"
   }
 }
