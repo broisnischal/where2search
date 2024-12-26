@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import archiver from "archiver";
 
-const output = fs.createWriteStream("./dist.zip");
+const output = fs.createWriteStream("./extension.zip");
 const archive = archiver("zip", { zlib: { level: 9 } });
 
 output.on("close", () => {
