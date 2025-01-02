@@ -25,20 +25,20 @@
   "contributors": [],
   "scripts": {
     "start": "tsc",
-    "watch": "tsc -w",
+    "watch": "concurrently \"tsc -w\" \"tsx hot-reload-server.ts\"",
     "clean": "rimraf dist",
     "copy-assets": "rsync -av --exclude 'tsconfig.json' --exclude 'src' --exclude 'dist' ./ dist/",
     "build": "npm run clean && npm run start && npm run copy-assets && tsx ./src/archive.ts"
   },
   "devDependencies": {
-    "@types/archiver": "^6.0.3",
+    "@types/chokidar": "^1.7.5",
     "@types/chrome": "^0.0.287",
-    "@types/node": "^22.10.2",
+    "@types/ws": "^8.5.13",
+    "chokidar": "^4.0.3",
+    "concurrently": "^9.1.2",
     "rimraf": "^6.0.1",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.2"
-  },
-  "dependencies": {
-    "archiver": "^7.0.1"
+    "typescript": "^5.7.2",
+    "ws": "^8.18.0"
   }
 }
